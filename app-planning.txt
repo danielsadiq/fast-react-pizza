@@ -1,0 +1,36 @@
+1. Application Requirements and Features.
+  -> Very simple app, where users can order one or more pizza from a menu
+  -> Requires no user accounts and no login: users just input thier names before using the app
+
+1. Project Requirement from the business
+
+
+2. Feature + Pages
+  Feature categories
+    1. User
+    2. Menu -> every feature related to loading and displaying the menu.
+    3. Cart -> From cart to menu, and then update that quantity
+    4. Order
+  All the different features/components of this app can be placed into one of these four categories.
+
+  Necessary Pages
+    1. Homepage /
+    2. Pizza menu /menu
+    3. Cart /cart
+    4. Placing a new order /order/new
+    5. Looking up an order /order/:orderID (using the useParams hook to pass state through the url)
+
+3. State Management + Tech decisions
+  Many times, our feature categories usually map very well to different state slices/domains.
+  So one slice for user, one for menu, one for cart and one for order
+    1. User -> Global UI state (no acct, so stays in the app)
+    2. Menu -> Global remote state (menu is fetched from an API)
+    3. Cart -> Global UI state (no need for API, just stored in the App)
+    4. Order -> Global remote state (fetched from and submitted to an API).
+
+  Our Tech Stack
+  -> Routing: React router
+  -> Styling -> tailwind css
+  -> Remote state -> React Router Data fetching ("render as you fetch" as opposed to "fetch-on-render", not really state management)
+  -> UI State management -> Redux
+
