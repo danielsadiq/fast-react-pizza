@@ -34,3 +34,10 @@
   -> Remote state -> React Router Data fetching ("render as you fetch" as opposed to "fetch-on-render", not really state management)
   -> UI State management -> Redux
 
+
+Setting Up File Structure
+A good approach is a feature based strcuture. 
+We creatre a feature for each strcuture.
+We then put all our reusable UI comps across the entire app in a ui folder
+We also create a services folder, where we place reusable code for interacting with apis.
+Utils -> helper functions we can reuse in multiple places in the application
