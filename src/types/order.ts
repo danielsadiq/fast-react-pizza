@@ -45,9 +45,9 @@ export type OrderItemType = {
 
 
 export type newOrderType = {
-  customer: string;
-  phone:string;
-  address:string;
+  customer?: string;
+  phone?:string;
+  address?:string;
   cart: CartItemType[];
   priority?: boolean;
 }

@@ -1,14 +1,14 @@
 /* eslint-disable react-refresh/only-export-components */
 // import { useState } from "react";
 
-import { Form, redirect, useNavigation } from "react-router-dom";
+import { Form, redirect, useActionData, useNavigation, type ActionFunctionArgs } from "react-router-dom";
 import { createOrder } from "../../services/apiRestaurant";
 import type { newOrderType } from "../../types/order";
 
 // https://uibakery.io/regex-library/phone-number
-const isValidPhone = (str) =>
+const isValidPhone = (str:string|undefined) =>
   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
-    str
+    str || ""
   );
 
 const fakeCart = [
@@ -41,6 +41,8 @@ function CreateOrder() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
+  const formErrors = useActionData() as {phone?:string};
+
   return (
     <div>
       <h2>Ready to order? Let's go!</h2>
@@ -57,6 +59,7 @@ function CreateOrder() {
           <div>
             <input type="tel" name="phone" required />
           </div>
+          {formErrors?.phone && <p>{formErrors.phone}</p>}
         </div>
 
         <div>
@@ -88,7 +91,7 @@ function CreateOrder() {
   );
 }
 
-export async function action({ request }) {
+export async function action({ request }: ActionFunctionArgs) {
   // Getting the data from the form.
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
@@ -96,7 +99,7 @@ export async function action({ request }) {
   // Create our new order object from the form data
   const order: newOrderType = {
     ...data,
-    cart: JSON.parse(data.cart),
+    cart: JSON.parse(String(data.cart)),
     priority: data.priority === "on",
   };
 
