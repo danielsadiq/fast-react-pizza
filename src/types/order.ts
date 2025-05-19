@@ -1,3 +1,4 @@
+import type { CartItemType } from "./cart";
 import type { ItemType } from "./item";
 
 export type Order = {
@@ -20,8 +21,33 @@ export type Order = {
   priorityPrice: number;
 };
 
+export type OrderType = {
+  id: string;
+  status: string;
+  priority: boolean;
+  priorityPrice: number;
+  orderPrice: number;
+  estimatedDelivery: string;
+  cart: {
+    pizzaId: number;
+    name: string;
+    quantity: number;
+    unitPrice: number;
+    totalPrice: number;
+  }[];
+};
+
 export type OrderItemType = {
   item: ItemType;
   isLoadingIngredients: boolean;
   ingredients: string[];
+};
+
+
+export type newOrderType = {
+  customer: string;
+  phone:string;
+  address:string;
+  cart: CartItemType[];
+  priority?: boolean;
 }

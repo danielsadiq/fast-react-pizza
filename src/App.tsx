@@ -1,24 +1,47 @@
-import { useState } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Home from "./ui/Home";
+import Menu, {loader as menuLoader} from "./features/menu/Menu";
+import Cart from "./features/cart/Cart";
+import CreateOrder, {action as createOrderAction} from "./features/order/CreateOrder";
+import Error from "./ui/Error";
+import Order, {loader as orderLoader} from "./features/order/Order";
+import AppLayout from "./ui/AppLayout";
 
+const router = createBrowserRouter([
+  {
+    element: <AppLayout />,
+    errorElement: <Error/>,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "/menu",
+        element: <Menu />,
+        loader:menuLoader,
+        errorElement: <Error/>,
+      },
+      {
+        path: "/cart",
+        element: <Cart />,
+      },
+      {
+        path: "/order/new",
+        element: <CreateOrder />,
+        action: createOrderAction,
+      },
+      {
+        path: "/order/:orderId",
+        element: <Order />,
+        loader: orderLoader,
+        errorElement: <Error/>,
+      },
+    ],
+  }
+]);
 function App() {
-  const [count, setCount] = useState(0);
-
-  return (
-    <>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
