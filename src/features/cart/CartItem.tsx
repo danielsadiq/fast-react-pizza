@@ -1,6 +1,6 @@
 import type { CartItemProps } from "../../types/item";
 import { formatCurrency } from "../../utils/helpers";
-function CartItem({ item }:CartItemProps) {
+function CartItem({ item }: CartItemProps) {
   // const { pizzaId, name, quantity, totalPrice } = item;
   const { name, quantity, totalPrice } = item;
 

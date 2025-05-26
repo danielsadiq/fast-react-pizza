@@ -43,11 +43,10 @@ export type OrderItemType = {
   ingredients: string[];
 };
 
-
 export type newOrderType = {
   customer?: string;
-  phone?:string;
-  address?:string;
+  phone?: string;
+  address?: string;
   cart: CartItemType[];
   priority?: boolean;
-}
+};

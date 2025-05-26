@@ -9,4 +9,4 @@ export type PizzaType = {
 
 export type MenuItemProps = {
   pizza: PizzaType;
-}
+};

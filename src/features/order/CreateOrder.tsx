@@ -1,14 +1,20 @@
 /* eslint-disable react-refresh/only-export-components */
 // import { useState } from "react";
 
-import { Form, redirect, useActionData, useNavigation, type ActionFunctionArgs } from "react-router-dom";
+import {
+  Form,
+  redirect,
+  useActionData,
+  useNavigation,
+  type ActionFunctionArgs,
+} from "react-router-dom";
 import { createOrder } from "../../services/apiRestaurant";
 import type { newOrderType } from "../../types/order";
 
 // https://uibakery.io/regex-library/phone-number
-const isValidPhone = (str:string|undefined) =>
+const isValidPhone = (str: string | undefined) =>
   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
-    str || ""
+    str || "",
   );
 
 const fakeCart = [
@@ -41,7 +47,7 @@ function CreateOrder() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
-  const formErrors = useActionData() as {phone?:string};
+  const formErrors = useActionData() as { phone?: string };
 
   return (
     <div>
@@ -103,11 +109,11 @@ export async function action({ request }: ActionFunctionArgs) {
     priority: data.priority === "on",
   };
 
-  const errors: {phone?:string} = {};
+  const errors: { phone?: string } = {};
   if (!isValidPhone(order.phone))
     errors.phone =
       "Please give us your correct phone number, We might need it to contact you.";
-  
+
   if (Object.keys(errors).length > 0) return errors;
 
   // Post the data to the API

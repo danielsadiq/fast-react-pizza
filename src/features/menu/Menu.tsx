@@ -5,14 +5,18 @@ import MenuItem from "./MenuItem";
 import type { PizzaType } from "../../types/pizza";
 
 function Menu() {
-  const menu:PizzaType[] = useLoaderData();
-  return <ul>
-    {menu.map(pizza => <MenuItem pizza={pizza} key={pizza.id} />)}
-  </ul>;
+  const menu: PizzaType[] = useLoaderData();
+  return (
+    <ul>
+      {menu.map((pizza) => (
+        <MenuItem pizza={pizza} key={pizza.id} />
+      ))}
+    </ul>
+  );
 }
 
-export async function loader(){
+export async function loader() {
   const menu = await getMenu();
-  return menu
+  return menu;
 }
 export default Menu;
