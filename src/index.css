@@ -36,6 +36,10 @@ body {
   animation: loading 1s infinite linear;
 }
 
+input{
+  background-color: white;
+}
+
 @keyframes loading {
   20% {
     background-position:
