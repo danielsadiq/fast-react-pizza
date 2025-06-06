@@ -5,10 +5,11 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
-    fontFamily: {
-      sans: 'Roboto Mono, monospace',
-    }
+    extend: {
+      fontFamily: {
+        sans: ['Roboto Mono', 'monospace'],
+    },
   },
   plugins: [],
+}
 }
