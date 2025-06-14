@@ -30,7 +30,6 @@ const fakeCart = [
 function Cart() {
   const cart = fakeCart;
   const username = useSelector(state => state.user.username);
-  // console.log(cart);
 
   return (
     <div className="px-4 py-3">
