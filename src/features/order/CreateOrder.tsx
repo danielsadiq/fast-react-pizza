@@ -12,6 +12,9 @@ import { createOrder } from "../../services/apiRestaurant";
 import type { newOrderType } from "../../types/order";
 import Button from "../../ui/Button";
 import { useSelector } from "react-redux";
+import { clearCart, getCart, getTotalCartPrice, getUserName } from "../cart/cartSlice";
+import EmptyCart from "../cart/EmptyCart";
+import store from "../../store";
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str: string | undefined) =>
@@ -19,38 +22,20 @@ const isValidPhone = (str: string | undefined) =>
     str || "",
   );
 
-const fakeCart = [
-  {
-    pizzaId: 12,
-    name: "Mediterranean",
-    quantity: 2,
-    unitPrice: 16,
-    totalPrice: 32,
-  },
-  {
-    pizzaId: 6,
-    name: "Vegetale",
-    quantity: 1,
-    unitPrice: 13,
-    totalPrice: 13,
-  },
-  {
-    pizzaId: 11,
-    name: "Spinach and Mushroom",
-    quantity: 1,
-    unitPrice: 15,
-    totalPrice: 15,
-  },
-];
-
 function CreateOrder() {
   // const [withPriority, setWithPriority] = useState(false);
-  const cart = fakeCart;
+  // const cart = fakeCart;
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
-  const username = useSelector(state => state.user.username);
+  const username = useSelector(getUserName);
+  const totalCartPrice = useSelector(getTotalCartPrice);
+  
 
   const formErrors = useActionData() as { phone?: string };
+
+  const cart = useSelector(getCart);
+
+  if (!cart.length) return <EmptyCart/>
 
   return (
     <div className="px-4 py-6">
@@ -93,7 +78,8 @@ function CreateOrder() {
         <div>
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />
           <Button type="primary" disabled={isSubmitting} >
-            {isSubmitting ? "Placing Order..." : "Order now!"}
+
+            {isSubmitting ? "Placing Order..." : `Order now! ${totalCartPrice}`}
           </Button>
         </div>
       </Form>
@@ -122,7 +108,10 @@ export async function action({ request }: ActionFunctionArgs) {
 
   // Post the data to the API
   const newOrder = await createOrder(order);
-  // Get back the new order object and redirect immediately to the id of the newly created order.
+
+  // Do NOT overuse this
+  store.dispatch(clearCart());
+    // Get back the new order object and redirect immediately to the id of the newly created order.
   return redirect(`/order/${newOrder.id}`);
 }
 
