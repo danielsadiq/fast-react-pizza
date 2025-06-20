@@ -5,7 +5,7 @@ type ButtonPropsType = {
   disabled?:boolean;
   to?: string;
   type?: string;
-  onClick?: ()=>void;
+  onClick?: (()=>void) | ((event: React.MouseEvent<HTMLButtonElement>) => void);
 }
 function Button({to, children, type, disabled=false, onClick}:ButtonPropsType) {
   const base = 'bg-yellow-400 text-sm uppercase hover:bg-yellow-300 font-semibold inline-block tracking-wide rounded-full transition-colors duration-300 focus:outline-none focus:ring focus:ring-yellow-300 focus:ring-offset-2 disabled:cursor-not-allowed'

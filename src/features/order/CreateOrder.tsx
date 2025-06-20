@@ -12,7 +12,12 @@ import { createOrder } from "../../services/apiRestaurant";
 import type { newOrderType } from "../../types/order";
 import Button from "../../ui/Button";
 import { useDispatch, useSelector } from "react-redux";
-import { clearCart, getCart, getTotalCartPrice, getUserName } from "../cart/cartSlice";
+import {
+  clearCart,
+  getCart,
+  getTotalCartPrice,
+  getUserName,
+} from "../cart/cartSlice";
 import EmptyCart from "../cart/EmptyCart";
 import store from "../../store";
 import { formatCurrency } from "../../utils/helpers";
@@ -30,48 +35,89 @@ function CreateOrder() {
   // const cart = fakeCart;
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
-  const username = useSelector(getUserName);
+  const {
+    username,
+    status: addressStatus,
+    position,
+    address,
+    error: errorAddress,
+  } = useSelector((state) => state.user);
+  const isLoadingAddress = addressStatus === "loading";
+  // const username = useSelector(getUserName);
   const totalCartPrice = useSelector(getTotalCartPrice);
   const priorityPrice = withPriority ? totalCartPrice * 0.2 : 0;
-  const totalPrice = totalCartPrice + priorityPrice
-  
+  const totalPrice = totalCartPrice + priorityPrice;
 
   const formErrors = useActionData() as { phone?: string };
 
   const cart = useSelector(getCart);
   const dispatch = useDispatch();
 
-  if (!cart.length) return <EmptyCart/>
+  if (!cart.length) return <EmptyCart />;
 
   return (
     <div className="px-4 py-6">
-      <h2 className="text-xl font-semibold mb-8">Ready to order? Let's go!</h2>
-
-      <button onClick={()=>dispatch(fetchAddress())}>Get address</button>
+      <h2 className="mb-8 text-xl font-semibold">Ready to order? Let's go!</h2>
 
       {/* <Form method="POST" action="/order/new"> */}
       <Form method="POST">
-        <div className="mb-5 flex gap-2 flex-col sm:flex-row sm:items-center">
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">First Name</label>
-          <input type="text" className="input grow" name="customer" defaultValue={username} required />
+          <input
+            type="text"
+            className="input grow"
+            name="customer"
+            defaultValue={username}
+            required
+          />
         </div>
 
-        <div className="mb-5 flex gap-2 flex-col sm:flex-row sm:items-center">
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">Phone number</label>
           <div className="grow">
             <input type="tel" name="phone" className="input w-full" required />
-          {formErrors?.phone && <p className="text-xs mt-2 text-red-700 bg-red-100 p-2 rounded-md">{formErrors.phone}</p>}
+            {formErrors?.phone && (
+              <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700">
+                {formErrors.phone}
+              </p>
+            )}
           </div>
         </div>
 
-        <div className="mb-5 flex gap-2 flex-col sm:flex-row sm:items-center">
+        <div className="relative mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">Address</label>
           <div className="grow">
-            <input type="text" className="input w-full" name="address" required />
+            <input
+              type="text"
+              disabled={isLoadingAddress}
+              defaultValue={address}
+              className="input w-full"
+              name="address"
+              required
+            />
           </div>
+          {address.status === "error" && (
+            <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700">
+              {errorAddress}
+            </p>
+          )}
+          {!position.latitude && !position.longitude && (
+            <span className="absolute right-[3px] top-[3px] z-20 md:right-[5px] md:top-[5px]">
+              <Button
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  e.preventDefault();
+                  dispatch(fetchAddress());
+                }}
+                type="small"
+                disabled={isLoadingAddress}
+              >
+                Get Position
+              </Button>
+            </span>
+          )}
         </div>
 
-        <div className="mb-12 flex gap-5 items-center">
+        <div className="mb-12 flex items-center gap-5">
           <input
             type="checkbox"
             name="priority"
@@ -85,9 +131,19 @@ function CreateOrder() {
 
         <div>
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />
-          <Button type="primary" disabled={isSubmitting} >
-
-            {isSubmitting ? "Placing Order..." : `Order 
+          <input
+            type="hidden"
+            name="position"
+            value={
+              position.latitude && position.latitude
+                ? `${position.latitude}, ${position.longitude}`
+                : ""
+            }
+          />
+          <Button type="primary" disabled={isSubmitting || isLoadingAddress}>
+            {isSubmitting
+              ? "Placing Order..."
+              : `Order 
             now! ${formatCurrency(totalPrice)}`}
           </Button>
         </div>
@@ -120,7 +176,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   // Do NOT overuse this
   store.dispatch(clearCart());
-    // Get back the new order object and redirect immediately to the id of the newly created order.
+  // Get back the new order object and redirect immediately to the id of the newly created order.
   return redirect(`/order/${newOrder.id}`);
 }
 

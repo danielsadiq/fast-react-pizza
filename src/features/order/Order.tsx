@@ -1,8 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // Test ID: IIDSAT
 
-import { useLoaderData } from "react-router-dom";
+import { useFetcher, useLoaderData } from "react-router-dom";
 import {
   calcMinutesLeft,
   formatCurrency,
@@ -10,7 +9,9 @@ import {
 } from "../../utils/helpers";
 import { getOrder } from "../../services/apiRestaurant";
 import type { OrderType } from "../../types/order";
+import type { ItemType } from "../../types/item";
 import OrderItem from "./OrderItem";
+import { useEffect } from "react";
 
 // const order = {
 //   id: "ABCDEF",
@@ -49,7 +50,14 @@ import OrderItem from "./OrderItem";
 
 function Order() {
   // Everyone can search for all orders, so for privacy reasons we're gonna gonna exclude names or address, these are only for the restaurant staff
-  const order: OrderType = useLoaderData();
+  const order: OrderType = useLoaderData() as OrderType;
+
+  // To load data associated with a certain route, without going to the route
+  const fetcher = useFetcher();
+
+  useEffect(function(){
+    if (!fetcher.data && fetcher.state === "idle") fetcher.load("/menu")
+  }, [fetcher])
   const {
     id,
     status,
@@ -82,9 +90,8 @@ function Order() {
         </p>
         <p className="text-xs text-stone-500">(Estimated delivery: {formatDate(estimatedDelivery)})</p>
       </div>
-
       <ul className="divide-y divide-stone-200 border-b border-t">
-        {cart.map(item => <OrderItem item={item} key={item.pizzaId}/>)}
+        {cart.map(item => <OrderItem item={item} key={item.pizzaId} isLoadingIngredients={fetcher.state === "loading"} ingredients={fetcher.data?.find((el: { id: number; }) => el.id === item.pizzaId).ingredients  ?? []}/>)}
       </ul>
 
       <div className="space-y-2 bg-stone-200 px-6 py-5">
