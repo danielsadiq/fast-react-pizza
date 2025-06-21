@@ -107,7 +107,10 @@ function Order() {
 // interface ParamsType {
 //   params: {orderId:string}
 // }
-export async function loader({ params }) {
+interface LoaderParams {
+  orderId: string;
+}
+export async function loader({ params }:{params:LoaderParams}) {
   console.log(params);
   const order: OrderType = await getOrder(params.orderId);
   return order;
