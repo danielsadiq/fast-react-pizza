@@ -16,7 +16,6 @@ import {
   clearCart,
   getCart,
   getTotalCartPrice,
-  getUserName,
 } from "../cart/cartSlice";
 import EmptyCart from "../cart/EmptyCart";
 import store from "../../store";
@@ -102,7 +101,7 @@ function CreateOrder() {
             </p>
           )}
           {!position.latitude && !position.longitude && (
-            <span className="absolute right-[3px] top-[3px] z-20 md:right-[5px] md:top-[5px]">
+            <span className="absolute right-[3px] top-[1px] z-20 md:right-[3px] md:top-[1px]">
               <Button
                 onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.preventDefault();
@@ -156,12 +155,14 @@ export async function action({ request }: ActionFunctionArgs) {
   // Getting the data from the form.
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
+  console.log(data.priority)
 
   // Create our new order object from the form data
   const order: newOrderType = {
     ...data,
     cart: JSON.parse(String(data.cart)),
-    priority: data.priority === "on",
+    // priority: data.priority === "on",
+    priority: data.priority,
   };
 
   const errors: { phone?: string } = {};
