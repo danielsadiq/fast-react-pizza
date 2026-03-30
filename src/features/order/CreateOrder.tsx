@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 // import { useState } from "react";
 
 import {
@@ -10,15 +9,16 @@ import {
 } from "react-router-dom";
 import { createOrder } from "../../services/apiRestaurant";
 import type { newOrderType } from "../../types/order";
+import type { RootState } from "../../store";
 import Button from "../../ui/Button";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   clearCart,
   getCart,
   getTotalCartPrice,
 } from "../cart/cartSlice";
 import EmptyCart from "../cart/EmptyCart";
-import store from "../../store";
+import store, { useAppDispatch } from "../../store";
 import { formatCurrency } from "../../utils/helpers";
 import { useState } from "react";
 import { fetchAddress } from "../user/userSlice";
@@ -40,7 +40,7 @@ function CreateOrder() {
     position,
     address,
     error: errorAddress,
-  } = useSelector((state) => state.user);
+  } = useSelector((state:RootState) => state.user);
   const isLoadingAddress = addressStatus === "loading";
   // const username = useSelector(getUserName);
   const totalCartPrice = useSelector(getTotalCartPrice);
@@ -50,7 +50,7 @@ function CreateOrder() {
   const formErrors = useActionData() as { phone?: string };
 
   const cart = useSelector(getCart);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   if (!cart.length) return <EmptyCart />;
 
@@ -95,7 +95,7 @@ function CreateOrder() {
               required
             />
           </div>
-          {address.status === "error" && (
+          {addressStatus === "error" && (
             <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700">
               {errorAddress}
             </p>
@@ -122,7 +122,7 @@ function CreateOrder() {
             name="priority"
             id="priority"
             className="h-6 w-6 accent-yellow-400 focus:outline-none focus:ring focus:ring-yellow-400 focus:ring-offset-2"
-            value={withPriority}
+            value={withPriority.toString()}
             onChange={(e) => setWithPriority(e.target.checked)}
           />
           <label htmlFor="priority">Want to yo give your order priority?</label>
@@ -162,7 +162,7 @@ export async function action({ request }: ActionFunctionArgs) {
     ...data,
     cart: JSON.parse(String(data.cart)),
     // priority: data.priority === "on",
-    priority: data.priority,
+    priority: data.priority === "true",
   };
 
   const errors: { phone?: string } = {};
