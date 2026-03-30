@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useFetcher } from "react-router-dom";
+import { useFetcher, type ActionFunctionArgs } from "react-router-dom";
 import type { OrderType } from "../../types/order";
 import Button from "../../ui/Button";
 import { updateOrder } from "../../services/apiRestaurant";
@@ -20,15 +20,12 @@ function UpdateOrder({ order }: { order: OrderType }) {
 }
 
 
-interface ActionParams {
-  orderId: string;
-}
-
 // export async function action({request, params}) {
-  export async function action({params}: {params: ActionParams}) {
+  export async function action({params}: ActionFunctionArgs) {
     // to get the order id, just use the params.
+    const orderId = params.orderId!;
     const data = {priority: true}
-    await updateOrder(params.orderId, data)
+    await updateOrder(orderId, data)
     console.log("update");
     return null;
   }

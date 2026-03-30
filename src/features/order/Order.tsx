@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 // Test ID: IIDSAT
 
-import { useFetcher, useLoaderData } from "react-router-dom";
+import { useFetcher, useLoaderData, type LoaderFunctionArgs } from "react-router-dom";
 import {
   calcMinutesLeft,
   formatCurrency,
@@ -104,15 +104,10 @@ function Order() {
     </div>
   );
 }
-// interface ParamsType {
-//   params: {orderId:string}
-// }
-interface LoaderParams {
-  orderId: string;
-}
-export async function loader({ params }:{params:LoaderParams}) {
+export async function loader({ params }:LoaderFunctionArgs) : Promise<OrderType> {
   console.log(params);
-  const order: OrderType = await getOrder(params.orderId);
+  const orderId = params.orderId!
+  const order = await getOrder(orderId);
   return order;
 }
 
